@@ -50,8 +50,7 @@ app.use(
 
     }))
 
-    app.use(cors());
-    app.use(cors({credentials: true, origin: 'http://localhost:3001'}));
+    app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 
     app.use(require('cookie-parser')(credentials.cookieSecret));
 
@@ -81,7 +80,7 @@ app.get('/createcustomproducts', function (req, res) {
 })
 
 
-app.post('/createProduct', function (req, res) {
+app.post('/createproduct', function (req, res) {
 
     product.find({title: req.body.title}, function (err, prod) {
 
@@ -90,14 +89,16 @@ app.post('/createProduct', function (req, res) {
         if (resProduct.length <= 0) {
             newproduct = product({
                 title: req.body.title,
-                price: req.body.price,
-                inventory_count: req.body.inventory
+                price: parseFloat(req.body.price),
+                inventory_count: parseInt(req.body.inventory)
             });
             newproduct.save();
             res.redirect('/fetchproducts');
         }
         else {
-            res.render('incorrectproduct');
+            res.json({
+                message:'product already exists'
+            })
         }
     })
 })
@@ -187,20 +188,26 @@ app.post('/updatecart', function (req, res) {
     var testInvt = 0;
     var cartinf = req.session.cart;
     var ar = [];
+    console.log('body checking 1');
+    console.log(req.body);
+    console.log('body checking 2');
     cartinf.items.forEach(function (cartitem, count) {
 
         function contentcart() {
             res.redirect(303, '/cart');
         }
 
-        var difference = req.body[cartitem.title] - cartitem.quantity;
+        var difference = parseInt(req.body.qtyOfProduct[cartitem.title]) - cartitem.quantity;
+       console.log('check difference');
+       console.log(difference);
+       console.log('check difference 1');
         quant = cartitem.quantity;
         var cartstoreitem = {
             title: cartitem.title,
             quantity: quant
         }
         ar.push(cartstoreitem);
-        cartitem.quantity = parseInt(req.body[cartitem.title]);
+        cartitem.quantity = parseInt(req.body.qtyOfProduct[cartitem.title]);
         product.find({title: cartitem.title}, function (err, r) {
             return r
         }).then(function (r) {
@@ -237,6 +244,9 @@ app.post('/updatecart', function (req, res) {
             Total Price is increased because quantity is increased
              */
             else if (difference > 0) {
+                console.log('difference compl pl');
+                console.log(difference);
+                console.log('difference compl 2');
                 cartinf.total_price += (difference) * cartitem.price;
                 cartinf.total_price = Math.round(cartinf.total_price * 100) / 100;
 
@@ -246,7 +256,9 @@ app.post('/updatecart', function (req, res) {
              */
 
             if (cartinf.items.length == 0)
-                res.render('emptycart');
+               res.json({
+                   message:'empty cart'
+               })
 
             else {
                 if ((count === cartinf.items.length - 1 && !testCheck) || (testCheck && count === cartinf.items.length - 1 + counter)) {
@@ -271,6 +283,10 @@ app.post('/updatecart', function (req, res) {
 app.get('/cart/clear', function (req, res) {
     req.session.cart = null;
     res.render('emptycart');
+})
+
+app.get('/sessioninfo',(req,res) => {
+    res.send(req.session);
 })
 
 
@@ -333,7 +349,10 @@ app.get('/cart', function (req, res) {
             Message is displayed if navigated to cart with
             no products
              */
-            res.send("Your shopping Cart is Empty " + '<a href="/fetchproducts">' + "Click here to choose product" + '</a>')
+            console.log('no products in the cart ');
+            res.json({
+                message:'empty cart'
+            })
         }
 
     }
@@ -426,7 +445,7 @@ app.get('/cart/add/:id', function (req, res) {
 })
 
 app.get('/clearsession',function(req,res) {
-    req.session = {};
+    req.session = null;
     res.send(req.session);
 })
 
@@ -441,9 +460,13 @@ app.get('/clearsession',function(req,res) {
 app.get('/checkout', function (req, res) {
     // if cart is empty ask the user to add products
     if (req.session.cart == null) {
-        res.render('emptycart');
+        console.log('first stage');
+        res.json({
+            message:'empty cart'
+        })
     }
     else if (req.session.cart.inventory_available) {
+        console.log('second stage');
         var cart_items_checkout = req.session.cart;
         var checkout_items = Object.assign({}, cart_items_checkout);
         checkout_items.items.forEach(function (d) {
@@ -455,9 +478,14 @@ app.get('/checkout', function (req, res) {
         })
         // set the session to null after getting checkout information
         req.session.cart = null;
-        res.render('checkout', {checkoutitem: checkout_items.items, total_price: checkout_items.total_price});
+        //res.render('checkout', {checkoutitem: checkout_items.items, total_price: checkout_items.total_price});
+        res.json({
+            checkoutitems: checkout_items.items,
+            total_price: checkout_items.total_price
+        })
     }
     else {
+        console.log('third stage');
         res.render('inventoryerror');
     }
 })

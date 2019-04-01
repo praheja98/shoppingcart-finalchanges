@@ -17,12 +17,16 @@ handleAddToCart(id) {
     console.log('debugger final 1');
    console.log(id);
     console.log('debugger final 2');
-    
-    fetch('http://localhost:3017/cart/add'+id).then(response => response.json())
+    var url ='http://localhost:3017/cart/add/'+id;
+    console.log('url check');
+    console.log(url);
+    console.log('url check 1');
+    fetch(url,{credentials:'include'}).then(response => response.json())
     .then(data => {
         console.log('debugger final 100');
         console.log(data);
         console.log('debugger final 101');
+        this.props.history.push('/cart');
     })
 }
 
@@ -58,9 +62,8 @@ render() {
         <td> {product.title}  </td>
         <td> {product.price} </td>
         <td> {product.inventory_count} </td>
-        <td> <button onClick={() => this.handleAddToCart(product._id)}> Test </button></td>
         {product.inventory_count > 0 ? 
-       <td> <a href={`/cart/add/${product._id}`}> Add To Cart </a> </td> 
+       <td> <button onClick={() =>this.handleAddToCart(product._id)}>Add To Cart </button></td> 
      : <td>Product Out of Inventory  </td>
         }
         </tr>

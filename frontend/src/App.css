@@ -52,3 +52,7 @@ body {
   display:flex;
   margin-left:20px;
 }
+
+.nav-link {
+  margin-left:200px;
+}
