@@ -50,7 +50,7 @@ app.use(
 
     }))
 
-    app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+    app.use(cors({credentials: true, origin: 'http://172.18.0.1:3000'}));
 
     app.use(require('cookie-parser')(credentials.cookieSecret));
 
@@ -490,10 +490,16 @@ app.get('/checkout', function (req, res) {
     }
 })
 
-app.get('/', function (req, res) {
+app.get('/testing', function (req, res) {
 
     res.redirect(303, '/createsampleproducts');
 
+})
+
+app.get('/test' , function(req,res) {
+    res.json({
+        testing:'check'
+    })
 })
 
 

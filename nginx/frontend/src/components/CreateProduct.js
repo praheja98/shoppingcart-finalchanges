@@ -37,7 +37,7 @@ class CreateProduct extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        fetch('http://localhost:3017/createproduct',{
+        fetch('/createproduct',{
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({

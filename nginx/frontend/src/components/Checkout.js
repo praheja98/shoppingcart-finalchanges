@@ -14,7 +14,7 @@ constructor(props) {
 }
 
 componentDidMount(){ 
-    fetch('http://localhost:3017/checkout',{credentials:'include'})
+    fetch('checkout',{credentials:'include'})
     .then(response => response.json())
     .then(data => {
         if(data.message) {

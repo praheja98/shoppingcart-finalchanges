@@ -27,7 +27,7 @@ componentDidMount() {
 	var id = this.props.match.params.id;
 	
 
-	fetch('http://localhost:3017/cart',{credentials:'include'})
+	fetch('/cart',{credentials:'include'})
 	.then(response => response.json())
     .then(data => {
 		if(data.message) {
@@ -72,7 +72,7 @@ updateCart(event) {
 	console.log('debugger test final praheja');
 	console.log(qtyOfProduct);
 	console.log('debugger test praheja done');
-	fetch('http://localhost:3017/updatecart',{
+	fetch('/updatecart',{
 		method:'POST',
 		credentials:'include',
 		headers:{'Content-Type':'application/json'},

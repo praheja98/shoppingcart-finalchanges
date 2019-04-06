@@ -1,9 +1,15 @@
 version: "2"
 services:
+  nginx:
+    build: ./nginx/
+    ports:
+    - "80:80"
+    links:
+    - app 
   app:
     container_name: app
     restart: always
-    build: .
+    build: ./backend/
     ports:
       - "3017:3017"
     links:

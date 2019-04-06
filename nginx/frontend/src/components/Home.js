@@ -17,7 +17,7 @@ handleAddToCart(id) {
     console.log('debugger final 1');
    console.log(id);
     console.log('debugger final 2');
-    var url ='http://localhost:3017/cart/add/'+id;
+    var url ='/cart/add/'+id;
     console.log('url check');
     console.log(url);
     console.log('url check 1');
@@ -31,7 +31,7 @@ handleAddToCart(id) {
 }
 
 componentDidMount(){ 
-    fetch('http://localhost:3017')
+    fetch('/testing')
     .then(response => response.json())
     .then(data => {
         console.log(data.productsForDisplay[0]._id);
